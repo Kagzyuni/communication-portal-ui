@@ -5,7 +5,8 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
-import Axios from 'axios'
+import Axios from 'axios';
+import Alert from '@mui/material/Alert';
 // material
 import {
   Link,
@@ -23,6 +24,7 @@ import { LoadingButton } from '@mui/lab';
 export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState(false);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -43,9 +45,15 @@ export default function LoginForm() {
         if(response.status === 200){
           navigate('/dashboard', { replace: true });
         }else {
+          formik.setSubmitting(false)
+          setLoginError(true)
           navigate('/login', { replace: true });
         }
-        
+      }).catch(error => {
+        console.log("Exception ", error)
+        formik.setSubmitting(false)
+        setLoginError(true)
+        navigate('/login', { replace: true });
       });
      // navigate('/dashboard', { replace: true });
     }
@@ -57,7 +65,18 @@ export default function LoginForm() {
     setShowPassword((show) => !show);
   };
 
+  let showError;
+
+  if(loginError){
+    showError = <Alert severity="error">Wrong Username Or Password!</Alert> ;
+  }else{
+    showError = "";
+  }
+
   return (
+    <div>
+     {showError}
+     <br/>
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Stack spacing={3}>
@@ -113,5 +132,6 @@ export default function LoginForm() {
         </LoadingButton>
       </Form>
     </FormikProvider>
+    </div>
   );
 }
