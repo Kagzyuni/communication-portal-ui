@@ -5,6 +5,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import { useNavigate } from 'react-router-dom';
+import Axios from 'axios'
 // material
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -14,6 +15,29 @@ import { LoadingButton } from '@mui/lab';
 export default function RegisterForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [handle, setHandle] = useState("");
+    const handleSelect = event => {
+      console.log(event.target.value)
+        setHandle(event.target.value);
+    }
+  const userTypes = [
+      {
+        value: '',
+        label: 'Select One',
+      },
+    {
+      value: 'ADMIN',
+      label: 'ADMIN',
+    },
+    {
+      value: 'TEACHER',
+      label: 'TEACHER',
+    },
+    {
+      value: 'GUEST',
+      label: 'GUEST',
+    },
+  ];
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -22,6 +46,7 @@ export default function RegisterForm() {
       .required('First name required'),
     lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Last name required'),
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    phoneNumber: Yup.string().required('Phone Number is Required'),
     password: Yup.string().required('Password is required')
   });
 
@@ -30,13 +55,33 @@ export default function RegisterForm() {
       firstName: '',
       lastName: '',
       email: '',
-      password: ''
+      userType: '',
+      phoneNumber: '',
+      password: '',
+      isActive: true
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (event) => {
+      console.log("Submit Form" ,JSON.stringify(event))
+      Axios.post('http://localhost:8082/register',event)
+      .then(response =>{
+        console.log(JSON.stringify(response))
+        const resp = response.data;
+        navigate('/login', { replace: true });
+      });
+      // Axios.get('http://localhost:8082/login')
+      // .then(response =>{
+      //   if(response.status === 200){
+      //     navigate('/login', { replace: true });
+      //   }else {
+      //     console.log("Error Registering User")
+      //   }
+      //   console.log(JSON.stringify(response))
+      // });
+      
     }
   });
+
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
@@ -74,6 +119,16 @@ export default function RegisterForm() {
 
           <TextField
             fullWidth
+            autoComplete="phonenumber"
+            type="phone"
+            label="Phone Number"
+            {...getFieldProps('phoneNumber')}
+            error={Boolean(touched.phoneNumber && errors.phoneNumber)}
+            helperText={touched.phoneNumber && errors.phoneNumber}
+          />
+
+          <TextField
+            fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
             label="Password"
@@ -90,6 +145,26 @@ export default function RegisterForm() {
             error={Boolean(touched.password && errors.password)}
             helperText={touched.password && errors.password}
           />
+
+        <TextField
+          id="filled-select-currency"
+          select
+          label="Select"
+          value={formik.userType}
+          helperText="Please select your User Type"
+          onChange={formik.handleChange}
+          SelectProps={{
+            native: true,
+          }}
+          {...getFieldProps('userType')}
+        >
+          {userTypes.map((option) => (
+         <option key={option.value} value={option.value}> 
+          {option.label}
+           </option>
+          ))}
+          </TextField>
+
 
           <LoadingButton
             fullWidth

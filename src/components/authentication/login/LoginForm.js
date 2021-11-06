@@ -5,6 +5,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
+import Axios from 'axios'
 // material
 import {
   Link,
@@ -32,11 +33,21 @@ export default function LoginForm() {
     initialValues: {
       email: '',
       password: '',
-      remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (event) => {
+      console.log(JSON.stringify(event))
+      Axios.post('http://localhost:8082/login',event)
+      .then(response =>{
+        console.log(JSON.stringify(response))
+        if(response.status === 200){
+          navigate('/dashboard', { replace: true });
+        }else {
+          navigate('/login', { replace: true });
+        }
+        
+      });
+     // navigate('/dashboard', { replace: true });
     }
   });
 
@@ -81,10 +92,10 @@ export default function LoginForm() {
         </Stack>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
             label="Remember me"
-          />
+          /> */}
 
           <Link component={RouterLink} variant="subtitle2" to="#">
             Forgot password?
