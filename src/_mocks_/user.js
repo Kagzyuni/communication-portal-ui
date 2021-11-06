@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { sample } from 'lodash';
+import { findLastKey, sample } from 'lodash';
 // utils
 import { mockImgAvatar } from '../utils/mockImages';
 

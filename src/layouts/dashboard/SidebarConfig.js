@@ -23,14 +23,19 @@ const sidebarConfig = [
     icon: getIcon(peopleFill)
   },
   {
-    title: 'product',
+    title: 'vacancy',
     path: '/dashboard/products',
     icon: getIcon(shoppingBagFill)
   },
   {
-    title: 'blog',
+    title: 'assignment',
     path: '/dashboard/blog',
     icon: getIcon(fileTextFill)
+  },
+  {
+    title: 'class Details',
+    path: '/dashboard/user',
+    icon: getIcon(lockFill)
   },
   {
     title: 'login',
