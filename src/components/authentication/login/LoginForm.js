@@ -7,6 +7,9 @@ import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import Axios from 'axios';
 import Alert from '@mui/material/Alert';
+// eslint-disable-next-line import/order
+import loggedInUser from '../../../_mocks_/loggedInUser';
+
 // material
 import {
   Link,
@@ -43,6 +46,8 @@ export default function LoginForm() {
       .then(response =>{
         console.log(JSON.stringify(response))
         if(response.status === 200){
+        loggedInUser.displayName =`${response.data.firstName  } ${ response.data.lastName}`;
+        loggedInUser.email = `${response.data.email}`;
           navigate('/dashboard', { replace: true });
         }else {
           formik.setSubmitting(false)
