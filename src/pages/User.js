@@ -1,9 +1,10 @@
+import React, { useEffect, useState } from 'react';
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
+import Axios from 'axios';
 // material
 import {
   Card,
@@ -28,6 +29,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
+import {UserService} from '../_mocks_/userService';
 
 // ----------------------------------------------------------------------
 
@@ -59,6 +61,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
+  console.log("applySortFilter",JSON.stringify(array))
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -78,6 +81,29 @@ export default function User() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [users, setUsers] = useState();
+
+  const userService = new UserService()
+
+  // useEffect(() => {
+  //   const tt= userService.getMyService()
+  //   console.log(JSON.stringify("jjjjjjjjjj",tt))
+  // }, []);
+
+  const getData = () => {
+    Axios.get('http://localhost:8082/users')
+    .then(response =>{
+      if(response.status === 200){
+          console.log("Class Call",JSON.stringify(response.data))
+          console.log("B4 UPDATE",JSON.stringify(users));
+          const j = response.data;
+          setUsers(j);
+         console.log("After Update",JSON.stringify(users));
+          return j;
+       // navigate('/login', { replace: true });
+      } 
+    });
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

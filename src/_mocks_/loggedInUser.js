@@ -4,4 +4,4 @@ const loggedInUser = {
     photoURL: '/static/mock-images/avatars/avatar_default.jpg'
   };
   
-  export default loggedInUser;
+export default loggedInUser;
