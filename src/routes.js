@@ -1,5 +1,7 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
+import React, { useEffect, useState } from 'react';
+import Axios from 'axios';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
@@ -14,6 +16,26 @@ import NotFound from './pages/Page404';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+
+  const [users, setUsers] = useState({});
+
+  useEffect(()=>{
+    getData();
+  },[]);
+
+  const getData = () => {
+    Axios.get('http://localhost:8082/users')
+    .then(response =>{
+      if(response.status === 200){
+        console.log("API dATA",JSON.stringify(response.data))
+          const j = response.data;
+          setUsers(j);
+       // navigate('/login', { replace: true });
+      } 
+    });
+  }
+
+
   return useRoutes([
     {
       path: '/dashboard',
@@ -21,7 +43,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
+        { path: 'user', element: <User userList={users}/> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
