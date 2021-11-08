@@ -35,11 +35,10 @@ import {UserService} from '../_mocks_/userService';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'Email', label: 'Email', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'PhoneNumber', label: 'PhoneNumber', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: 'sss', label: 'Status', alignRight: false },
   { id: '' }
 ];
 
@@ -97,7 +96,7 @@ export default function User(props) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = users.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -135,7 +134,7 @@ export default function User(props) {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
   const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
 
@@ -172,16 +171,16 @@ export default function User(props) {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={users.length}
+                  rowCount={filteredUsers.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {users
+                  {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { email, firstName, lastName, active, userType, phoneNumber, password } = row;
+                      const {firstName, lastName, email,phoneNumber, userType, active, password } = row;
                       const isItemSelected = selected.indexOf(email) !== -1;
 
                       return (
@@ -196,29 +195,37 @@ export default function User(props) {
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
-                              onChange={(event) => handleClick(event, email)}
+                            onChange={(event) => handleClick(event, email)}
                             />
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Avatar alt={firstName} src={firstName} />
                               <Typography variant="subtitle2" noWrap>
-                                {firstName}
+                              {firstName} {lastName}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{lastName}</TableCell>
+                          <TableCell align="left">{email}</TableCell>
                           <TableCell align="left">{userType}</TableCell>
-                          <TableCell align="left">{password}</TableCell>
-                          <TableCell align="left">{active ? 'Yes' : 'No'}</TableCell>
+                          <TableCell align="left">{phoneNumber}</TableCell>
+                          {/* <TableCell align="left">{active ? 'Active' : 'Inactive'}</TableCell> */}
                           <TableCell align="left">
+                          <Label
+                              variant="ghost"
+                              color={(active === false && 'error') || 'success'}
+                            >
+                            {active ? 'Active' : 'Inactive'}
+                            </Label>
+                            </TableCell>
+                          {/* <TableCell align="left">
                             <Label
                               variant="ghost"
                               color={(phoneNumber === 'banned' && 'error') || 'success'}
                             >
                               {sentenceCase(phoneNumber)}
                             </Label>
-                          </TableCell>
+                          </TableCell> */}
 
                           <TableCell align="right">
                             <UserMoreMenu />
@@ -248,7 +255,7 @@ export default function User(props) {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={filteredUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
