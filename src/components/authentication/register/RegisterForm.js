@@ -58,7 +58,7 @@ export default function RegisterForm() {
       userType: '',
       phoneNumber: '',
       password: '',
-      isActive: true
+      active: true,
     },
     validationSchema: RegisterSchema,
     onSubmit: (event) => {
